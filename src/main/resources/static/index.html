@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TIN</title>
+
+<link rel="stylesheet" type="text/css" href="./ui/css/clr-ui.min.css" />
+<script src="./ui/js/jquery-3.5.1.min.js"></script>
+
+</head>
+<body>
+
+<div id="loginDiv" class="login-wrapper">
+    <form class="login">
+        <section class="title">
+            <h3 class="welcome">Welcome to TIN vSphere Helper</h3>
+            The Teammate I Need
+            <h5 class="hint">Log in to vCenter Server to get started</h5>
+        </section>
+        <div class="login-group">
+			<input type="text" id="vcAddress" class="clr-input" name="vcAddress" placeholder="FQDN or IP" style="margin: .25rem 0 .75rem;"/>
+			<input type="text" id="username" class="clr-input" name="username" placeholder="Username" style="margin: .25rem 0 .75rem;"/>
+			<input type="password" id="password" class="clr-input" name="password" placeholder="Password" style="margin: .25rem 0 .75rem;"/>
+			
+             <div id="errorConnecting" class="error active" style="display: none;">
+                Unable to authenticate
+            </div>
+            <button id="loginButton" type="button" onclick="initLogin()" class="btn btn-primary">Authenticate  <span id="loader" class="spinner spinner-inline" style="display: none;"></span></button>
+        </div>
+    </form>
+</div>
+
+
+<div id="tinDiv" style="display: none;"> 
+
+	<div id="global-alert" class="alert alert-app-level alert-danger" role="alert" style="display: none;">
+	    <div class="alert-items">
+	        <div class="alert-item static">
+	            <div class="alert-text">
+	                Unable to retrieve data
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<header class="header-6">
+	    <div class="branding">
+	        <a href="" class="nav-link">
+	            <span class="title">TIN vSphere Helper</span>
+	        </a>
+	    </div>
+	    <div class="header-nav">
+        <a href="javascript:showReportingView()" id="reporting-view" class="active nav-link nav-text">Reporting</a>
+        <a href="javascript:showActionsView()" id="actions-view" class="nav-link nav-text">Actions</a>
+    </div>
+	    <div class="header-actions" onclick="logout()">
+	        <a href="" class="nav-link nav-text">
+	            Log Out
+	        </a>
+	    </div>
+	</header>
+	
+	<div id="reporting">
+		<nav id="reporting-subnav" class="subnav">
+		    <ul class="nav">
+		        <li class="nav-item" style="cursor: pointer;">
+		            <span id="nav-vc" class="nav-link active" onclick="showVcPage()">vCenter</span>
+		        </li>
+		        <li class="nav-item" style="cursor: pointer;">
+	<!-- 	        	<a id="nav-hosts" class="nav-link" href="javascript:showHostsPage()">Hosts</a> -->
+		            <span id="nav-hosts" class="nav-link" onclick="showHostsPage()">Hosts</span>
+		        </li>
+		        <li class="nav-item">
+		            <a class="nav-link" href="#">VMs</a>
+		        </li>
+		    </ul>
+		</nav>
+		<div id="getting-info-spinner" style="display: none;">
+			<span class="spinner spinner-inline">
+			</span>
+			<span>
+			    Getting info...
+			</span>
+		</div>
+	
+		<div id="vcenter" style="display: none;">
+			<p id="vcSummary" style="padding-left: 30px;"></p>
+			<table id="vc-extensions" class="table">
+			<caption style="text-align: left">Installed vCenter extensions</caption>
+		    <thead>
+		        <tr>
+		        	<th class="left">Key</th>
+		            <th class="left">Label</th>
+		            <th class="left">Summary</th>
+		            <th class="left">Version</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    </tbody>
+			</table>
+		</div>
+		
+		
+		<div id="hosts" style="display: none;">
+			<p id="hostsSummary" style="padding-left: 30px;">Hosts page</p>
+			<table id="hosts-versions-table" class="table">
+			<caption style="text-align: left">Host versions summary</caption>
+		    <thead>
+		        <tr>
+		        	<th class="left">Name</th>
+		            <th class="left">Major Version</th>
+		            <th class="left">Build</th>
+		            <th class="left">Release Name</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    </tbody>
+			</table>
+		</div>
+	
+	</div>
+	
+	<div id="actions">
+		<nav id="actions-subnav" class="subnav">
+		    <ul class="nav">
+		        <li class="nav-item" style="cursor: pointer;">
+		            <span id="nav-vc" class="nav-link active" onclick="showVcPage()">Check vMotion Compatibility</span>
+		        </li>
+		        <li class="nav-item" style="cursor: pointer;">
+		            <span id="nav-hosts" class="nav-link" onclick="showHostsPage()">Copy vCenter Role</span>
+		        </li>
+		    </ul>
+		</nav>
+		<p>Actions view</p>
+		<button onClick="getVmotionStatus()">Test vMotion</button>
+	</div>
+
+</div>
+
+<script>
+$(function() {
+    var tinLoginSuccess = sessionStorage.getItem("tinLoginSuccess");
+	if (tinLoginSuccess) {
+		// show or hide elements
+		// after refresh, default to Reproting-vCetnter view
+		document.getElementById('loginDiv').style.display = "none";
+		document.getElementById('tinDiv').style.display = "block";
+		document.getElementById('reporting').style.display = "block";
+		document.getElementById('actions').style.display = "none";
+		
+		//collect and show VC data on refresh
+		showVcPage()
+	}
+    
+});
+</script>
+
+<script>
+function getVcData() {
+	document.getElementById('getting-info-spinner').style.display = "";
+	document.getElementById('vcSummary').innerHTML = '';
+	jQuery.ajax ({
+	    url: "/collection/vcenter",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    	console.log(data);
+	    	var collectionTime = new Date(data.collectionTimestamp);
+		    var vcSummary = document.getElementById('vcSummary').innerHTML;
+		    vcSummary = '';
+		    vcSummary += "<b>vCenter Server info:</b><br/>";
+		    vcSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
+		    vcSummary += "Version: "+data.about.version+"<br/>";
+		    vcSummary += "Build: "+data.about.build+"<br/>";
+		    vcSummary += "Release Name: "+data.vcenterRelease.fullName+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">Release notes</a>)<br/>";
+		    vcSummary += "Release Date: "+data.vcenterRelease.releaseDate+"<br/>";
+		    vcSummary += "OS Type: "+data.about.osType+"<br/>";
+		    document.getElementById('vcSummary').innerHTML = vcSummary;
+		    
+		    $("tr:has(td)").remove();
+		    
+		    var trHTML = '';
+	        $.each(data.extensions, function (i, item) {
+	            trHTML += '<tr><td class="left">' + item.key + '</td><td class="left">' + item.label + '</td><td class="left">' + item.summary + '</td><td class="left">' + item.version + '</td></tr>';
+	        });
+	        $('#vc-extensions').append(trHTML);
+	        document.getElementById('getting-info-spinner').style.display = "none";
+	        document.getElementById('vcenter').style.display = "block";
+        },
+        
+        error: function() {
+			console.log("there was an error getting vCenter");
+			showGlobalAlert();
+        }
+	});
+}
+</script>
+
+<script>
+function getHostData() {
+	document.getElementById('getting-info-spinner').style.display = "";
+	jQuery.ajax ({
+	    url: "/collection/hosts",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    	console.log(data);
+	    	var collectionTime = new Date(data.collectionTimestamp);
+	    	var hostsSummary = document.getElementById('hostsSummary').innerHTML;
+	    	hostsSummary = '';
+	    	hostsSummary += "<b>ESXi hosts info:</b><br/>";
+	    	hostsSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
+	    	hostsSummary += "Total managed hosts: "+data.hosts.length+"<br/>";
+	    	
+	    	document.getElementById('hostsSummary').innerHTML = hostsSummary;
+	    	
+			$("tr:has(td)").remove();
+		    
+		    var trHTML = '';
+	        $.each(data.hosts, function (i, item) {
+	            trHTML += '<tr><td class="left">' + item.name + '</td><td class="left">' + item.hostRelease.minorRelease + '</td><td class="left">' + item.hostRelease.build + '</td><td class="left">' + item.hostRelease.friendlyName + '</td></tr>';
+	        });
+	        $('#hosts-versions-table').append(trHTML);
+	    	document.getElementById('getting-info-spinner').style.display = "none";
+	    	document.getElementById('hosts').style.display = "block";
+        },
+        
+        error: function() {
+			console.log("there was an error getting hosts");
+			showGlobalAlert();
+        }
+	});
+}
+</script>
+
+<script>
+function getVcReleases() {
+	jQuery.ajax ({
+	    url: "/collection/vcenter-releases",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    },
+        
+        error: function() {
+			console.log("there was an error getting vCenter releases");
+        }
+	});
+}
+</script>
+
+<script>
+function getHostReleases() {
+	jQuery.ajax ({
+	    url: "/collection/host-releases",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    },
+        
+        error: function() {
+			console.log("there was an error getting Host releases");
+        }
+	});
+}
+</script>
+
+<script>
+function getVmotionStatus() {
+	jQuery.ajax ({
+	    url: "/action/vmotion-compatibility",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    },
+        
+        error: function() {
+			console.log("there was an error getting vmotion statu");
+        }
+	});
+}
+</script>
+
+<script>
+function initLogin() {
+	document.getElementById('errorConnecting').style.display = "none";
+	var loginButton = document.getElementById('loginButton');
+	loginButton.disabled = true;
+	var loader = document.getElementById('loader');
+	loader.style.display = "";
+	var address = document.getElementById('vcAddress').value;
+	var username = document.getElementById('username').value;
+	var password = document.getElementById('password').value;
+	var auth = `{
+    	"address": "${address}",
+    	"username": "${username}",
+    	"password": "${password}"
+	}`;
+	jQuery.ajax ({
+	    url: "/authenticate",
+	    type: "POST",
+	    data: auth,
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+    		sessionStorage.setItem("tinLoginSuccess", true);
+	    	//Show or hide elements
+	    	document.getElementById('loginDiv').style.display = "none";
+	    	document.getElementById('tinDiv').style.display = "block";
+	    	loader.style.display = "none";
+	    	// set initial info
+	    	getVcReleases(); // for now getting only once after login
+	    	getHostReleases(); // for now getting only once after login
+	    	showReportingView();
+        },
+        
+        error: function(xhr, status, error) {
+        	document.getElementById('errorConnecting').innerHTML = xhr.responseText;
+        	document.getElementById('errorConnecting').style.display = "";
+        	loginButton.disabled = false;
+        	loader.style.display = "none";
+        }
+	});
+}
+</script>
+
+<script>
+function logout() {
+	sessionStorage.removeItem("tinLoginSuccess");
+	document.location.href="/";
+}
+</script>
+ 
+ 
+<script>
+function showVcPage() {
+	document.getElementById('hosts').style.display = "none";
+	document.getElementById("nav-hosts").classList.remove('active');
+	document.getElementById("nav-vc").classList.add('active');
+	getVcData();
+	
+}
+</script>
+
+<script>
+function showHostsPage() {
+	document.getElementById('vcenter').style.display = "none";
+	document.getElementById("nav-vc").classList.remove('active');
+	document.getElementById("nav-hosts").classList.add('active');
+	getHostData();
+	
+}
+</script>
+
+<script>
+function showReportingView() {
+	document.getElementById('reporting').style.display = "block";
+	document.getElementById('actions').style.display = "none";
+	document.getElementById("actions-view").classList.remove('active');
+	document.getElementById("reporting-view").classList.add('active');
+	showVcPage();
+}
+</script>
+
+<script>
+function showActionsView() {
+	document.getElementById('reporting').style.display = "none";
+	document.getElementById('actions').style.display = "block";
+	document.getElementById("reporting-view").classList.remove('active');
+	document.getElementById("actions-view").classList.add('active');
+	document.getElementById('vcenter').style.display = "none";
+}
+</script>
+
+<script>
+function showGlobalAlert() {
+	document.getElementById('global-alert').style.display = "";
+	document.getElementById('actions').style.display = "none";
+	document.getElementById('reporting').style.display = "none";
+	document.getElementById('getting-info-spinner').style.display = "none";
+}
+</script>
+
+
+</body>
+</html>
