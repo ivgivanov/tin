@@ -5,6 +5,7 @@
 <title>TIN</title>
 
 <link rel="stylesheet" type="text/css" href="./ui/css/clr-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="./ui/css/custom.css" />
 <script src="./ui/js/jquery-3.5.1.min.js"></script>
 
 </head>
@@ -12,7 +13,8 @@
 
 <div id="loginDiv" class="login-wrapper">
     <form class="login">
-        <section class="title">
+		<div class="login-card">
+		<section class="title">
             <h3 class="welcome">Welcome to TIN vSphere Helper</h3>
             The Teammate I Need
             <h5 class="hint">Log in to vCenter Server to get started</h5>
@@ -26,7 +28,8 @@
                 Unable to authenticate
             </div>
             <button id="loginButton" type="button" onclick="initLogin()" class="btn btn-primary">Authenticate  <span id="loader" class="spinner spinner-inline" style="display: none;"></span></button>
-        </div>
+		</div>
+	</div>
     </form>
 </div>
 
