@@ -3,6 +3,7 @@ package info.ivgivanov.tin.service.collection;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,11 @@ public class VcCollectionService {
 			e.printStackTrace();
 		}
 		
+		Optional<OptionValue> hostnameUrlOpVal = advSettings.stream()
+				  .filter(opVal -> opVal.getKey().equals("config.vpxd.hostnameUrl"))
+				  .findFirst();
+		
+		String hostnameUrl  = (hostnameUrlOpVal.isPresent()) ? hostnameUrlOpVal.get().getValue().toString() : "Unknown";
 		
 		if (extManagerResult != null) {
             for (ObjectContent objectContent : extManagerResult.getObjects()) {
@@ -105,9 +111,9 @@ public class VcCollectionService {
 		}
 		
 		if (releaseNamesRepository.getVcenterReleaseNames() != null && releaseNamesRepository.getVcenterReleaseNames().get(serviceContent.getAbout().getBuild()) != null) {
-			return new VcenterServerDto(serviceContent.getAbout(), extensions, advSettings, Instant.now().toEpochMilli(), releaseNamesRepository.getVcenterReleaseNames().get(serviceContent.getAbout().getBuild()));
+			return new VcenterServerDto(hostnameUrl, serviceContent.getAbout(), extensions, advSettings, Instant.now().toEpochMilli(), releaseNamesRepository.getVcenterReleaseNames().get(serviceContent.getAbout().getBuild()));
 		} else {
-			return new VcenterServerDto(serviceContent.getAbout(), extensions, advSettings, Instant.now().toEpochMilli(), new VcenterRelease("Unknown"));
+			return new VcenterServerDto(hostnameUrl, serviceContent.getAbout(), extensions, advSettings, Instant.now().toEpochMilli(), new VcenterRelease("Unknown"));
 		}
 		
 	}

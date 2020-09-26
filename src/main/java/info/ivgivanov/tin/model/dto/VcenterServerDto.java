@@ -10,12 +10,21 @@ import info.ivgivanov.tin.model.tin.TinVcenterExtension;
 
 public class VcenterServerDto {
 	
+	private String hostname;
 	private AboutInfo about;
 	private List<TinVcenterExtension> extensions;
 	private List<OptionValue> advancedSettings;
 	private Long collectionTimestamp;
 	private VcenterRelease vcenterRelease;
 	
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	private void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
 
 	public AboutInfo getAbout() {
 		return about;
@@ -60,7 +69,8 @@ public class VcenterServerDto {
 		this.vcenterRelease = vcenterRelease;
 	}
 
-	public VcenterServerDto(AboutInfo about, List<TinVcenterExtension> ext, List<OptionValue> advSettings, Long timestamp, VcenterRelease vcRelease) {
+	public VcenterServerDto(String hostname, AboutInfo about, List<TinVcenterExtension> ext, List<OptionValue> advSettings, Long timestamp, VcenterRelease vcRelease) {
+		this.setHostname(hostname);
 		this.setAbout(about);
 		this.setExtensions(ext);
 		this.setAdvancedSettings(advSettings);
