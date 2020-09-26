@@ -8,9 +8,44 @@
 .login {
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
-    background-color: #ECF0F4 !important;
+    background-color: #F6F7FB !important;
 }
 
 .login-group {
     padding-top: 1.5rem !important;
+}
+
+body,.subnav,#reporting  {
+    background-color: #F6F7FB;
+}
+
+.content-container {
+    padding: 0rem 1.5rem 2rem 1.5rem;
+}
+
+.tin-table {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.table th, .table td {
+    padding: 0rem;
+    border-radius: 0px;
+    text-align: left;
+}
+
+.tin-table th {
+    background-color: #EDEFF7;
+    text-transform: uppercase;
+    padding: 1rem;
+    border: none;
+    letter-spacing: 0.5px;
+    color: #6D6D6D;
+}
+
+.tin-table td {
+    padding: 1rem;
+    border-color: #EDEFF7;
 }
