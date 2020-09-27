@@ -78,49 +78,50 @@
 		        </li>
 		    </ul>
 		</nav>
-		<div id="getting-info-spinner" style="display: none;">
-			<span class="spinner spinner-inline">
-			</span>
-			<span>
-			    Getting info...
-			</span>
-		</div>
-	
-		<div id="vcenter" style="display: none;">
-			<p id="vcSummary" style="padding-left: 30px;"></p>
-			<table id="vc-extensions" class="table">
-			<caption style="text-align: left">Installed vCenter extensions</caption>
-		    <thead>
-		        <tr>
-		        	<th class="left">Key</th>
-		            <th class="left">Label</th>
-		            <th class="left">Summary</th>
-		            <th class="left">Version</th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		    </tbody>
-			</table>
-		</div>
+		<div class="content-container">
+			<div id="getting-info-spinner" style="display: none;">
+				<span class="spinner spinner-inline">
+				</span>
+				<span>
+					Getting info...
+				</span>
+			</div>
 		
-		
-		<div id="hosts" style="display: none;">
-			<p id="hostsSummary" style="padding-left: 30px;">Hosts page</p>
-			<table id="hosts-versions-table" class="table">
-			<caption style="text-align: left">Host versions summary</caption>
-		    <thead>
-		        <tr>
-		        	<th class="left">Name</th>
-		            <th class="left">Major Version</th>
-		            <th class="left">Build</th>
-		            <th class="left">Release Name</th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		    </tbody>
-			</table>
+			<div id="vcenter" style="display: none;">
+				<p id="vcSummary"></p>
+				<h5>Installed vCenter extensions</h5>
+				<table id="vc-extensions" class="table tin-table">
+				<thead>
+					<tr>
+						<th >Key</th>
+						<th >Label</th>
+						<th >Summary</th>
+						<th >Version</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				</table>
+			</div>
+			
+			
+			<div id="hosts" style="display: none;">
+				<p id="hostsSummary">Hosts page</p>
+				<h5>Host versions summary</h5>
+				<table id="hosts-versions-table" class="table tin-table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Major Version</th>
+						<th>Build</th>
+						<th>Release Name</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				</table>
+			</div>
 		</div>
-	
 	</div>
 	
 	<div id="actions">
@@ -171,20 +172,21 @@ function getVcData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 		    var vcSummary = document.getElementById('vcSummary').innerHTML;
 		    vcSummary = '';
-		    vcSummary += "<b>vCenter Server info:</b><br/>";
+		    vcSummary += "<h5>vCenter Server info:</h5>";
 		    vcSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
 		    vcSummary += "Version: "+data.about.version+"<br/>";
 		    vcSummary += "Build: "+data.about.build+"<br/>";
 		    vcSummary += "Release Name: "+data.vcenterRelease.fullName+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">Release notes</a>)<br/>";
 		    vcSummary += "Release Date: "+data.vcenterRelease.releaseDate+"<br/>";
 		    vcSummary += "OS Type: "+data.about.osType+"<br/>";
+			vcSummary += "OS Type: "+data.about.apiVersion+"<br/>";
 		    document.getElementById('vcSummary').innerHTML = vcSummary;
 		    
 		    $("tr:has(td)").remove();
 		    
 		    var trHTML = '';
 	        $.each(data.extensions, function (i, item) {
-	            trHTML += '<tr><td class="left">' + item.key + '</td><td class="left">' + item.label + '</td><td class="left">' + item.summary + '</td><td class="left">' + item.version + '</td></tr>';
+	            trHTML += '<tr><td>' + item.key + '</td><td>' + item.label + '</td><td>' + item.summary + '</td><td>' + item.version + '</td></tr>';
 	        });
 	        $('#vc-extensions').append(trHTML);
 	        document.getElementById('getting-info-spinner').style.display = "none";
@@ -211,7 +213,7 @@ function getHostData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 	    	var hostsSummary = document.getElementById('hostsSummary').innerHTML;
 	    	hostsSummary = '';
-	    	hostsSummary += "<b>ESXi hosts info:</b><br/>";
+	    	hostsSummary += "<h5>ESXi hosts info:</h5>";
 	    	hostsSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
 	    	hostsSummary += "Total managed hosts: "+data.hosts.length+"<br/>";
 	    	
@@ -221,7 +223,7 @@ function getHostData() {
 		    
 		    var trHTML = '';
 	        $.each(data.hosts, function (i, item) {
-	            trHTML += '<tr><td class="left">' + item.name + '</td><td class="left">' + item.hostRelease.minorRelease + '</td><td class="left">' + item.hostRelease.build + '</td><td class="left">' + item.hostRelease.friendlyName + '</td></tr>';
+	            trHTML += '<tr><td>' + item.name + '</td><td>' + item.hostRelease.minorRelease + '</td><td>' + item.hostRelease.build + '</td><td>' + item.hostRelease.friendlyName + '</td></tr>';
 	        });
 	        $('#hosts-versions-table').append(trHTML);
 	    	document.getElementById('getting-info-spinner').style.display = "none";
