@@ -23,6 +23,76 @@ body,.subnav,#reporting  {
     padding: 0rem 1.5rem 2rem 1.5rem;
 }
 
+#vcSummary {
+    max-width: 1400px;
+}
+
+.collection-timestamp {
+    float: right;
+    font-size: 14px;
+}
+
+.vc-info-widget {
+    background: #5580AA;  
+    border-radius: 16px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 0px 1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    overflow: hidden;
+}
+
+.vc-info-widget > div {
+    padding: 1.5rem;
+    border-right: 1px solid #678CB2;
+    min-width: 10rem;
+}
+
+.vc-info-widget > div:last-child {
+    border-right: none;
+}
+
+.vc-info-widget .block-title {
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #A1E6FA;
+    margin-top: 0rem;
+}
+
+.vc-info-widget .block-main-info {
+    font-size: 20px;
+    line-height: 18px;
+    font-weight: 300;
+    color: #FCFCFC;
+    margin-top: 0.5rem;
+}
+
+.vc-info-widget .block-additional-info {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    color: #A1E6FA;
+    margin-top: 0.5rem;
+}
+ 
+.vc-info-widget p {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} 
+
+.vc-info-widget a {
+    color: #A1E6FA;
+}
+
+.vc-info-widget a img {
+    width: 14px;
+    margin: 0rem 0.125rem;
+}
+
 .tin-table {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     border-radius: 8px;
