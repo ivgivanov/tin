@@ -107,7 +107,7 @@
 			
 			<div id="hosts" style="display: none;">
 				<p id="hostsSummary">Hosts page</p>
-				<h5>Host versions summary</h5>
+				<h5>Host versions summary<span id="totalHosts" class="meta-header-info"></span></h5>
 				<table id="hosts-versions-table" class="table tin-table">
 				<thead>
 					<tr>
@@ -201,7 +201,7 @@ function getVcData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 		    var vcSummary = document.getElementById('vcSummary').innerHTML;
 		    vcSummary = '';
-			vcSummary += "<h5>"+data.hostname+"<span class=\"collection-timestamp\">Data retrieved: "+collectionTime.toString()+"<span></h5>";
+			vcSummary += "<h5>"+data.hostname+"<span class=\"meta-header-info\">Data retrieved: "+collectionTime.toLocaleString()+"<span></h5>";
 		    vcSummary += "<div class=\"vc-info-widget\">"
 			vcSummary += "<div><p class=\"block-title\">Version</p><p class=\"block-main-info\">"+data.about.version+"</p><p class=\"block-additional-info\">Build "+data.about.build+"</p></div>";
 		    vcSummary += "<div><p class=\"block-title\">Release</p><p class=\"block-main-info\">"+data.vcenterRelease.fullName+"</p><p class=\"block-additional-info\">Released on "+data.vcenterRelease.releaseDate+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">see release notes<img src=\"./ui/images/new-tab.svg\"></a>)</p></div>";
@@ -241,12 +241,9 @@ function getHostData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 	    	var hostsSummary = document.getElementById('hostsSummary').innerHTML;
 	    	hostsSummary = '';
-	    	hostsSummary += "<h5>ESXi hosts info:</h5>";
-	    	hostsSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
-	    	hostsSummary += "Total managed hosts: "+data.hosts.length+"<br/>";
-	    	
+	    	hostsSummary += "<h5>ESXi hosts info <span class=\"meta-header-info\">Data retrieved: "+collectionTime.toLocaleString()+"<span></h5>";	    	
 	    	document.getElementById('hostsSummary').innerHTML = hostsSummary;
-	    	
+			document.getElementById('totalHosts').innerHTML = "Total managed hosts: "+data.hosts.length;
 			$("tr:has(td)").remove();
 		    
 		    var trHTML = '';
