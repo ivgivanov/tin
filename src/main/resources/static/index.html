@@ -128,15 +128,42 @@
 		<nav id="actions-subnav" class="subnav">
 		    <ul class="nav">
 		        <li class="nav-item" style="cursor: pointer;">
-		            <span id="nav-vc" class="nav-link active" onclick="showVcPage()">Check vMotion Compatibility</span>
+		            <span id="nav-vmotion" class="nav-link active" onclick="showCheckVmotionPage()">Check vMotion Compatibility</span>
 		        </li>
 		        <li class="nav-item" style="cursor: pointer;">
-		            <span id="nav-hosts" class="nav-link" onclick="showHostsPage()">Copy vCenter Role</span>
+		            <span id="nav-vcrole" class="nav-link" onclick="showHostsPage()">Copy vCenter Role</span>
 		        </li>
 		    </ul>
 		</nav>
-		<p>Actions view</p>
-		<button onClick="getVmotionStatus()">Test vMotion</button>
+		<div class="content-container">
+			<div id="getting-info-spinner-action" style="display: none;">
+				<span class="spinner spinner-inline">
+				</span>
+				<span>
+					Getting info...
+				</span>
+			</div>
+			<div id="check-vmotion" style="display: none;"> 
+				<p>Check vmotion view</p>
+				<label>Select a cluster:</label>
+				<select id="clusters-option">
+				</select>
+				
+				<button onClick="getVmotionStatus()">Test vMotion</button>
+				
+				<table id="vmotion-errors-table" class="table tin-table">
+					<thead>
+						<tr>
+							<th >VM</th>
+							<th >target Host</th>
+							<th >Error message</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
 </div>
@@ -238,6 +265,35 @@ function getHostData() {
 </script>
 
 <script>
+function getClustersForCheckVmotion() {
+	document.getElementById('getting-info-spinner-action').style.display = "";
+	$("#clusters-option").empty();
+	jQuery.ajax ({
+	    url: "/collection/clusters",
+	    type: "GET",
+	    contentType: "application/json; charset=utf-8",
+	    success: function(data, status, xhr) {
+	    	console.log(data);
+	    	var sel = document.getElementById('clusters-option');
+	    	$.each(data.clusters, function (i, item) {
+	    		var opt = document.createElement('option');
+	    		opt.appendChild(document.createTextNode(item.name));
+	    		opt.value = JSON.stringify(item);
+	    		sel.appendChild(opt);
+	    	});
+	    	document.getElementById('getting-info-spinner-action').style.display = "none";
+	    	document.getElementById('check-vmotion').style.display = "block";
+        },
+        
+        error: function() {
+			console.log("there was an error getting hosts");
+			showGlobalAlert();
+        }
+	});
+}
+</script>
+
+<script>
 function getVcReleases() {
 	jQuery.ajax ({
 	    url: "/collection/vcenter-releases",
@@ -271,15 +327,33 @@ function getHostReleases() {
 
 <script>
 function getVmotionStatus() {
+	var clusterDropdown = document.getElementById("clusters-option");
+	var selectedCluster = clusterDropdown.options[clusterDropdown.selectedIndex].value;
 	jQuery.ajax ({
 	    url: "/action/vmotion-compatibility",
-	    type: "GET",
+	    type: "POST",
+	    data: selectedCluster,
 	    contentType: "application/json; charset=utf-8",
 	    success: function(data, status, xhr) {
+	    	console.log(data);
+	    	 $("tr:has(td)").remove();
+			    
+			    var trHTML = '';
+		        $.each(data.checkResultDto, function (i, item) {
+		        	var ul = document.createElement("ul");
+		        	$.each(item.checkResult.error, function (j, resError) {
+		        		var li = document.createElement("li");
+		        		li.appendChild(document.createTextNode(resError.localizedMessage));
+		        		ul.appendChild(li);
+		        	});
+		            //trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + item.checkResult.error[0].localizedMessage + '</td><td>';
+		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.innerHTML + '</td><td>';
+		        });
+		        $('#vmotion-errors-table').append(trHTML);
 	    },
         
         error: function() {
-			console.log("there was an error getting vmotion statu");
+			console.log("there was an error getting vmotion status");
         }
 	});
 }
@@ -359,6 +433,7 @@ function showHostsPage() {
 function showReportingView() {
 	document.getElementById('reporting').style.display = "block";
 	document.getElementById('actions').style.display = "none";
+	document.getElementById('check-vmotion').style.display = "none";
 	document.getElementById("actions-view").classList.remove('active');
 	document.getElementById("reporting-view").classList.add('active');
 	showVcPage();
@@ -372,6 +447,19 @@ function showActionsView() {
 	document.getElementById("reporting-view").classList.remove('active');
 	document.getElementById("actions-view").classList.add('active');
 	document.getElementById('vcenter').style.display = "none";
+	
+	showCheckVmotionPage();
+	
+}
+</script>
+
+<script>
+function showCheckVmotionPage() {
+	//document.getElementById('vcenter-role').style.display = "none";
+	document.getElementById("nav-vcrole").classList.remove('active');
+	document.getElementById("nav-vmotion").classList.add('active');
+	getClustersForCheckVmotion();
+	
 }
 </script>
 

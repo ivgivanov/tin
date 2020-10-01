@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import info.ivgivanov.tin.model.VcConnection;
+import info.ivgivanov.tin.model.dto.ClusterReferenceListDto;
 import info.ivgivanov.tin.model.dto.HostSystemListDto;
 import info.ivgivanov.tin.model.dto.VcenterServerDto;
 
@@ -16,6 +17,9 @@ public class CollectionService {
 	@Autowired
 	private HostCollectionService hostCollectionService;
 	
+	@Autowired
+	private ClusterCollectionService clusterCollectionService;
+	
 
 	public VcenterServerDto collectVc(VcConnection vcConnection) {
 		
@@ -26,6 +30,9 @@ public class CollectionService {
 		return hostCollectionService.collectHosts(vcConnection);
 	}
 	
+	public ClusterReferenceListDto collectClusters(VcConnection vcConnection) {
+		return clusterCollectionService.collectClusters(vcConnection);
+	}
 	
 
 }
