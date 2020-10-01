@@ -88,7 +88,7 @@
 			</div>
 		
 			<div id="vcenter" style="display: none;">
-				<p id="vcSummary"></p>
+				<div id="vcSummary"></div>
 				<h5>Installed vCenter extensions</h5>
 				<table id="vc-extensions" class="table tin-table">
 				<thead>
@@ -172,14 +172,13 @@ function getVcData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 		    var vcSummary = document.getElementById('vcSummary').innerHTML;
 		    vcSummary = '';
-		    vcSummary += "<h5>vCenter Server info:</h5>";
-		    vcSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
-		    vcSummary += "Version: "+data.about.version+"<br/>";
-		    vcSummary += "Build: "+data.about.build+"<br/>";
-		    vcSummary += "Release Name: "+data.vcenterRelease.fullName+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">Release notes</a>)<br/>";
-		    vcSummary += "Release Date: "+data.vcenterRelease.releaseDate+"<br/>";
-		    vcSummary += "OS Type: "+data.about.osType+"<br/>";
-			vcSummary += "OS Type: "+data.about.apiVersion+"<br/>";
+			vcSummary += "<h5>"+data.hostname+"<span class=\"collection-timestamp\">Data retrieved: "+collectionTime.toString()+"<span></h5>";
+		    vcSummary += "<div class=\"vc-info-widget\">"
+			vcSummary += "<div><p class=\"block-title\">Version</p><p class=\"block-main-info\">"+data.about.version+"</p><p class=\"block-additional-info\">Build "+data.about.build+"</p></div>";
+		    vcSummary += "<div><p class=\"block-title\">Release</p><p class=\"block-main-info\">"+data.vcenterRelease.fullName+"</p><p class=\"block-additional-info\">Released on "+data.vcenterRelease.releaseDate+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">see release notes<img src=\"./ui/images/new-tab.svg\"></a>)</p></div>";
+			vcSummary += "<div><p class=\"block-title\">Instance UUID</p><p class=\"block-main-info\">"+data.about.instanceUuid+"</p></div>";
+			vcSummary += "<div><p class=\"block-title\">API version</p><p class=\"block-main-info\">"+data.about.apiVersion+"</p><p class=\"block-additional-info\">API type "+data.about.apiType+"</p></div>";
+			vcSummary += "</div>"
 		    document.getElementById('vcSummary').innerHTML = vcSummary;
 		    
 		    $("tr:has(td)").remove();
