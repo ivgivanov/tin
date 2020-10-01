@@ -104,7 +104,6 @@ body,.subnav,#reporting  {
     padding: 0rem;
     border-radius: 0px;
     text-align: left;
-    font-size: 14px;
 }
 
 .tin-table th {
@@ -119,6 +118,7 @@ body,.subnav,#reporting  {
 .tin-table td {
     padding: 1rem;
     border-color: #EDEFF7;
+    font-size: 14px;
 }
 
 .tin-table td.no-wrap {
@@ -143,4 +143,20 @@ body,.subnav,#reporting  {
 
 .tin-table li:first-child {
     padding-top: 0rem;
+  }
+
+  .tin-header {
+      background-color: #354f69;
+  }
+
+  .tin-logo {
+    background-image: url(../images/logo.svg);
+    margin-right: 1rem;
+    min-width: none;
+    height: 46px;
+    width: 40px;
+  }
+
+  #getting-info-spinner, #getting-info-spinner-action {
+      margin-top: 1.5rem;
   }
