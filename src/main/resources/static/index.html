@@ -144,24 +144,26 @@
 				</span>
 			</div>
 			<div id="check-vmotion" style="display: none;"> 
-				<p>Check vmotion view</p>
+				<p>Check vMotion Compatibility across all hosts and VMs in a given cluster</p>
 				<label>Select a cluster:</label>
 				<select id="clusters-option">
 				</select>
 				
-				<button onClick="getVmotionStatus()">Test vMotion</button>
+				<button id="check-vmotion-button" onClick="getVmotionStatus()" class="btn btn-primary">Test vMotion <span id="vmotion-loader" class="spinner spinner-inline" style="display: none;"></span></button>
 				
-				<table id="vmotion-errors-table" class="table tin-table">
-					<thead>
-						<tr>
-							<th >VM</th>
-							<th >target Host</th>
-							<th >Error message</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
+				<div id="check-vmotion-table" style="display: none;">
+					<table id="vmotion-errors-table" class="table tin-table">
+						<thead>
+							<tr>
+								<th >VM</th>
+								<th >target Host</th>
+								<th >Error message</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -329,12 +331,17 @@ function getHostReleases() {
 function getVmotionStatus() {
 	var clusterDropdown = document.getElementById("clusters-option");
 	var selectedCluster = clusterDropdown.options[clusterDropdown.selectedIndex].value;
+	document.getElementById('vmotion-loader').style.display = "";
+	document.getElementById('check-vmotion-button').disabled = true;
+	document.getElementById('check-vmotion-table').style.display = "none";
 	jQuery.ajax ({
 	    url: "/action/vmotion-compatibility",
 	    type: "POST",
 	    data: selectedCluster,
 	    contentType: "application/json; charset=utf-8",
 	    success: function(data, status, xhr) {
+	    	document.getElementById('vmotion-loader').style.display = "none";
+	    	document.getElementById('check-vmotion-button').disabled = false;
 	    	console.log(data);
 	    	 $("tr:has(td)").remove();
 			    
@@ -350,9 +357,12 @@ function getVmotionStatus() {
 		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.innerHTML + '</td><td>';
 		        });
 		        $('#vmotion-errors-table').append(trHTML);
+		        document.getElementById('check-vmotion-table').style.display = "block";
 	    },
         
         error: function() {
+        	document.getElementById('vmotion-loader').style.display = "none";
+        	document.getElementById('check-vmotion-button').disabled = false;
 			console.log("there was an error getting vmotion status");
         }
 	});
