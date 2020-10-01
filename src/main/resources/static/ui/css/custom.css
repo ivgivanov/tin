@@ -104,6 +104,7 @@ body,.subnav,#reporting  {
     padding: 0rem;
     border-radius: 0px;
     text-align: left;
+    font-size: 14px;
 }
 
 .tin-table th {
@@ -119,3 +120,27 @@ body,.subnav,#reporting  {
     padding: 1rem;
     border-color: #EDEFF7;
 }
+
+.tin-table td.no-wrap {
+    white-space: nowrap;
+}
+
+.tin-table ul {
+    margin-left: 1rem;
+}
+.tin-table ul.error{
+    color: #f52d0a;
+    font-family: monospace;
+}
+
+.tin-table li {
+  line-height: 18px;
+  list-style-position: outside;
+  list-style-type: circle;
+  padding-top: .5rem;
+}
+
+
+.tin-table li:first-child {
+    padding-top: 0rem;
+  }

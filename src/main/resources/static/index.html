@@ -345,13 +345,14 @@ function getVmotionStatus() {
 			    var trHTML = '';
 		        $.each(data.checkResultDto, function (i, item) {
 		        	var ul = document.createElement("ul");
+					ul.classList.add('error')
 		        	$.each(item.checkResult.error, function (j, resError) {
 		        		var li = document.createElement("li");
 		        		li.appendChild(document.createTextNode(resError.localizedMessage));
 		        		ul.appendChild(li);
 		        	});
 		            //trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + item.checkResult.error[0].localizedMessage + '</td><td>';
-		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.outerHTML + '</td>';
+		        	trHTML += '<tr><td class=\"no-wrap\">' + item.vmName + '</td><td class=\"no-wrap\">' + item.hostName + '</td><td>' + ul.outerHTML + '</td>';
 		        });
 		        $('#vmotion-errors-table').append(trHTML);
 		        document.getElementById('check-vmotion-table').style.display = "block";
