@@ -18,6 +18,7 @@ import com.vmware.vim25.RuntimeFaultFaultMsg;
 
 import info.ivgivanov.tin.model.VcAuthentication;
 import info.ivgivanov.tin.model.VcConnection;
+import info.ivgivanov.tin.model.dto.ClusterReferenceListDto;
 import info.ivgivanov.tin.model.dto.HostSystemListDto;
 import info.ivgivanov.tin.model.dto.VcenterServerDto;
 import info.ivgivanov.tin.repository.ReleaseNamesRepository;
@@ -59,6 +60,16 @@ public class CollectionController {
 		VcConnection vcConnection = new VcConnection(vcAuth);
 		
 		return collectionService.collectHosts(vcConnection);	
+		
+	}
+	
+	@GetMapping("/collection/clusters")
+	public ClusterReferenceListDto getClustersInfo(HttpSession session) throws KeyManagementException, NoSuchAlgorithmException, UnknownHostException, RuntimeFaultFaultMsg, InvalidLoginFaultMsg, InvalidLocaleFaultMsg {
+	
+		VcAuthentication vcAuth = (VcAuthentication) session.getAttribute("auth");
+		VcConnection vcConnection = new VcConnection(vcAuth);
+		
+		return collectionService.collectClusters(vcConnection);	
 		
 	}
 	
