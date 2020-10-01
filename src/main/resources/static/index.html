@@ -351,7 +351,7 @@ function getVmotionStatus() {
 		        		ul.appendChild(li);
 		        	});
 		            //trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + item.checkResult.error[0].localizedMessage + '</td><td>';
-		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.innerHTML + '</td><td>';
+		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.outerHTML + '</td>';
 		        });
 		        $('#vmotion-errors-table').append(trHTML);
 		        document.getElementById('check-vmotion-table').style.display = "block";
