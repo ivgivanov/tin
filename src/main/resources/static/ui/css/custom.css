@@ -27,7 +27,7 @@ body,.subnav,#reporting  {
     max-width: 1400px;
 }
 
-.collection-timestamp {
+.meta-header-info {
     float: right;
     font-size: 14px;
 }
@@ -35,7 +35,7 @@ body,.subnav,#reporting  {
 .vc-info-widget {
     background: #5580AA;  
     border-radius: 16px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 0px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     display: flex;
     overflow: hidden;
 }
@@ -118,4 +118,45 @@ body,.subnav,#reporting  {
 .tin-table td {
     padding: 1rem;
     border-color: #EDEFF7;
+    font-size: 14px;
 }
+
+.tin-table td.no-wrap {
+    white-space: nowrap;
+}
+
+.tin-table ul {
+    margin-left: 1rem;
+}
+.tin-table ul.error{
+    color: #f52d0a;
+    font-family: monospace;
+}
+
+.tin-table li {
+  line-height: 18px;
+  list-style-position: outside;
+  list-style-type: circle;
+  padding-top: .5rem;
+}
+
+
+.tin-table li:first-child {
+    padding-top: 0rem;
+  }
+
+  .tin-header {
+      background-color: #354f69;
+  }
+
+  .tin-logo {
+    background-image: url(../images/logo.svg);
+    margin-right: 1rem;
+    min-width: none;
+    height: 46px;
+    width: 40px;
+  }
+
+  #getting-info-spinner, #getting-info-spinner-action {
+      margin-top: 1.5rem;
+  }

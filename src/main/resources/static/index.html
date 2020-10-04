@@ -46,9 +46,10 @@
 	    </div>
 	</div>
 
-	<header class="header-6">
+	<header class="tin-header">
 	    <div class="branding">
-	        <a href="" class="nav-link">
+			<a href="" class="nav-link">
+				<span class="clarity-logo tin-logo"></span>
 	            <span class="title">TIN vSphere Helper</span>
 	        </a>
 	    </div>
@@ -107,7 +108,7 @@
 			
 			<div id="hosts" style="display: none;">
 				<p id="hostsSummary">Hosts page</p>
-				<h5>Host versions summary</h5>
+				<h5>Host versions summary<span id="totalHosts" class="meta-header-info"></span></h5>
 				<table id="hosts-versions-table" class="table tin-table">
 				<thead>
 					<tr>
@@ -201,7 +202,7 @@ function getVcData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 		    var vcSummary = document.getElementById('vcSummary').innerHTML;
 		    vcSummary = '';
-			vcSummary += "<h5>"+data.hostname+"<span class=\"collection-timestamp\">Data retrieved: "+collectionTime.toString()+"<span></h5>";
+			vcSummary += "<h5>"+data.hostname+"<span class=\"meta-header-info\">Data retrieved: "+collectionTime.toLocaleString()+"<span></h5>";
 		    vcSummary += "<div class=\"vc-info-widget\">"
 			vcSummary += "<div><p class=\"block-title\">Version</p><p class=\"block-main-info\">"+data.about.version+"</p><p class=\"block-additional-info\">Build "+data.about.build+"</p></div>";
 		    vcSummary += "<div><p class=\"block-title\">Release</p><p class=\"block-main-info\">"+data.vcenterRelease.fullName+"</p><p class=\"block-additional-info\">Released on "+data.vcenterRelease.releaseDate+" (<a href="+data.vcenterRelease.releaseNotes+" target=\"_blank\">see release notes<img src=\"./ui/images/new-tab.svg\"></a>)</p></div>";
@@ -241,12 +242,9 @@ function getHostData() {
 	    	var collectionTime = new Date(data.collectionTimestamp);
 	    	var hostsSummary = document.getElementById('hostsSummary').innerHTML;
 	    	hostsSummary = '';
-	    	hostsSummary += "<h5>ESXi hosts info:</h5>";
-	    	hostsSummary += "<i>Timestamp: "+collectionTime.toString()+"</i><br/><br/>";
-	    	hostsSummary += "Total managed hosts: "+data.hosts.length+"<br/>";
-	    	
+	    	hostsSummary += "<h5>ESXi hosts info <span class=\"meta-header-info\">Data retrieved: "+collectionTime.toLocaleString()+"<span></h5>";	    	
 	    	document.getElementById('hostsSummary').innerHTML = hostsSummary;
-	    	
+			document.getElementById('totalHosts').innerHTML = "Total managed hosts: "+data.hosts.length;
 			$("tr:has(td)").remove();
 		    
 		    var trHTML = '';
@@ -348,13 +346,14 @@ function getVmotionStatus() {
 			    var trHTML = '';
 		        $.each(data.checkResultDto, function (i, item) {
 		        	var ul = document.createElement("ul");
+					ul.classList.add('error')
 		        	$.each(item.checkResult.error, function (j, resError) {
 		        		var li = document.createElement("li");
 		        		li.appendChild(document.createTextNode(resError.localizedMessage));
 		        		ul.appendChild(li);
 		        	});
 		            //trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + item.checkResult.error[0].localizedMessage + '</td><td>';
-		        	trHTML += '<tr><td>' + item.vmName + '</td><td>' + item.hostName + '</td><td>' + ul.innerHTML + '</td><td>';
+		        	trHTML += '<tr><td class=\"no-wrap\">' + item.vmName + '</td><td class=\"no-wrap\">' + item.hostName + '</td><td>' + ul.outerHTML + '</td>';
 		        });
 		        $('#vmotion-errors-table').append(trHTML);
 		        document.getElementById('check-vmotion-table').style.display = "block";
