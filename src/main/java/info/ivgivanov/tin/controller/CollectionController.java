@@ -38,7 +38,6 @@ public class CollectionController {
 		
 		VcConnection vcConnection = new VcConnection(vcAuth);
 		vcConnection.getVimPort().logout(vcConnection.getServiceContent().getSessionManager());
-		System.out.println("Logged out from vCenter Server");
 		session.setAttribute("auth", vcAuth);
 	
 	  }

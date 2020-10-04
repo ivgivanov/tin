@@ -152,6 +152,7 @@
 				
 				<button id="check-vmotion-button" onClick="getVmotionStatus()" class="btn btn-primary">Test vMotion <span id="vmotion-loader" class="spinner spinner-inline" style="display: none;"></span></button>
 				
+				<p id="vmotion-check-summary" style="display: none;"></p>
 				<div id="check-vmotion-table" style="display: none;">
 					<table id="vmotion-errors-table" class="table tin-table">
 						<thead>
@@ -332,6 +333,7 @@ function getVmotionStatus() {
 	document.getElementById('vmotion-loader').style.display = "";
 	document.getElementById('check-vmotion-button').disabled = true;
 	document.getElementById('check-vmotion-table').style.display = "none";
+	document.getElementById('vmotion-check-summary').style.display = "none";
 	jQuery.ajax ({
 	    url: "/action/vmotion-compatibility",
 	    type: "POST",
@@ -357,11 +359,17 @@ function getVmotionStatus() {
 		        });
 		        $('#vmotion-errors-table').append(trHTML);
 		        document.getElementById('check-vmotion-table').style.display = "block";
+		        
+		        document.getElementById('vmotion-check-summary').innerHTML = "vMotion checked against:<br/>Host count: "+data.hostCount+" VM count: "+data.vmCount;
+		        document.getElementById('vmotion-check-summary').style.display = "";
 	    },
         
-        error: function() {
+        error: function(xhr, status, error) {
         	document.getElementById('vmotion-loader').style.display = "none";
         	document.getElementById('check-vmotion-button').disabled = false;
+        	var obj = JSON.parse(xhr.responseText);
+        	document.getElementById('vmotion-check-summary').innerHTML = "Unsufficient input data:<br/>Host count: "+obj.hosts+" VM count: "+obj.vms;
+        	document.getElementById('vmotion-check-summary').style.display = "";
 			console.log("there was an error getting vmotion status");
         }
 	});

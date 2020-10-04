@@ -25,6 +25,7 @@ import com.vmware.vim25.RetrieveResult;
 import com.vmware.vim25.RuntimeFaultFaultMsg;
 import com.vmware.vim25.TaskInfo;
 
+import info.ivgivanov.tin.controller.VmotionCheckPrerunException;
 import info.ivgivanov.tin.model.VcConnection;
 import info.ivgivanov.tin.model.dto.CheckResultDto;
 import info.ivgivanov.tin.model.dto.CheckResultListDto;
@@ -82,6 +83,10 @@ public class VmotionCompatibilityChecker {
 		
 		//Checking vMotion Compatibility
 		
+		if (vmList.size() == 0 || hostList.size() == 0) {
+			throw new VmotionCheckPrerunException("{\"hosts\": "+hostList.size()+", \"vms\": "+vmList.size()+"}");
+		}
+		
 		ManagedObjectReference vmProvChecker = vcConnection.getServiceContent().getVmProvisioningChecker();
 		
 		try {
@@ -94,6 +99,8 @@ public class VmotionCompatibilityChecker {
 				
 			} while (!taskFinished(vcConnection, taskResult));
 			
+			vmotionTestResult.setHostCount(hostList.size());
+			vmotionTestResult.setVmCount(vmList.size());
 
             Set<String> problematicVms = new HashSet<String>();
 

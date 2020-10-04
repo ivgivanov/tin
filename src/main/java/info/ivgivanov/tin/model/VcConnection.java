@@ -55,7 +55,7 @@ public class VcConnection {
 	
 	public VcConnection(VcAuthentication vcAuth) throws RuntimeFaultFaultMsg, InvalidLoginFaultMsg, InvalidLocaleFaultMsg, KeyManagementException, NoSuchAlgorithmException, UnknownHostException {
 
-		System.out.println("Authentication to vCenter Server");
+		//System.out.println("Authentication to vCenter Server");
 		
 		String address = "https://"+vcAuth.getAddress()+"/sdk";
 		

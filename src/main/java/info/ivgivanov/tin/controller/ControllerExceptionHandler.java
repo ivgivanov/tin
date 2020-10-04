@@ -30,5 +30,10 @@ public class ControllerExceptionHandler {
 	  public ResponseEntity generalLoginException(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	  }
+	
+	@ExceptionHandler(value = {VmotionCheckPrerunException.class})
+	  public ResponseEntity invalidVmotionData(Exception ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	  }
 
 }

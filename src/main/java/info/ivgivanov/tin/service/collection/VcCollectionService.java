@@ -104,7 +104,6 @@ public class VcCollectionService {
 		
 		try {
 			vcConnection.getVimPort().logout(vcConnection.getServiceContent().getSessionManager());
-			System.out.println("Logged out from vCenter Server");
 		} catch (RuntimeFaultFaultMsg e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
